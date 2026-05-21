@@ -3,8 +3,8 @@
 环境变量：
     VPS8_EMAIL    (必填) 登录邮箱
     VPS8_PASSWORD (必填) 登录密码
-    TELEGRAM_BOT_TOKEN (可选)
-    TELEGRAM_CHAT_ID   (可选)
+    TG_BOT_TOKEN (可选)
+    TG_CHAT_ID   (可选)
     GITHUB_RUN_URL     (可选，由 workflow 注入)
 
 退出码：
