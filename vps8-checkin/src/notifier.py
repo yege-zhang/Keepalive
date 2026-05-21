@@ -1,6 +1,6 @@
 """Telegram 通知模块。
 
-读取环境变量 TELEGRAM_BOT_TOKEN 和 TELEGRAM_CHAT_ID。
+读取环境变量 TG_BOT_TOKEN 和 TG_CHAT_ID。
 任意一个未设置时，发送函数静默跳过。
 任何网络异常都被吃掉，不影响主流程。
 """
@@ -17,8 +17,8 @@ from .env import load_local_env
 
 
 def _is_configured() -> bool:
-    return bool(os.environ.get("TELEGRAM_BOT_TOKEN")) and bool(
-        os.environ.get("TELEGRAM_CHAT_ID")
+    return bool(os.environ.get("TG_BOT_TOKEN")) and bool(
+        os.environ.get("TG_CHAT_ID")
     )
 
 
@@ -26,11 +26,11 @@ def send(text: str) -> bool:
     load_local_env()
 
     if not _is_configured():
-        print("[notifier] TELEGRAM_BOT_TOKEN 或 TELEGRAM_CHAT_ID 未配置，跳过推送")
+        print("[notifier] TG_BOT_TOKEN 或 TG_CHAT_ID 未配置，跳过推送")
         return False
 
-    token = os.environ["TELEGRAM_BOT_TOKEN"]
-    chat_id = os.environ["TELEGRAM_CHAT_ID"]
+    token = os.environ["TG_BOT_TOKEN"]
+    chat_id = os.environ["TG_CHAT_ID"]
     url = f"https://api.telegram.org/bot{token}/sendMessage"
 
     try:
@@ -73,7 +73,7 @@ def send_photo(photo_path: Path | str, caption: str) -> bool:
     load_local_env()
 
     if not _is_configured():
-        print("[notifier] TELEGRAM_BOT_TOKEN 或 TELEGRAM_CHAT_ID 未配置，跳过图片推送")
+        print("[notifier] TG_BOT_TOKEN 或 TG_CHAT_ID 未配置，跳过图片推送")
         return False
 
     path = Path(photo_path)
@@ -81,8 +81,8 @@ def send_photo(photo_path: Path | str, caption: str) -> bool:
         print(f"[notifier] 图片不存在，跳过推送: {path}")
         return False
 
-    token = os.environ["TELEGRAM_BOT_TOKEN"]
-    chat_id = os.environ["TELEGRAM_CHAT_ID"]
+    token = os.environ["TG_BOT_TOKEN"]
+    chat_id = os.environ["TG_CHAT_ID"]
     url = f"https://api.telegram.org/bot{token}/sendPhoto"
 
     try:
@@ -118,7 +118,7 @@ def _sanitize_exception(exc: Exception) -> str:
 
 def _sanitize_text(text: str) -> str:
     msg = text
-    for secret_name in ("TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID"):
+    for secret_name in ("TG_BOT_TOKEN", "TG_CHAT_ID"):
         secret = os.environ.get(secret_name)
         if secret:
             msg = msg.replace(secret, "<redacted>")
