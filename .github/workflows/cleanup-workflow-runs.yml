@@ -28,8 +28,9 @@ jobs:
             const KEEP = 5; // 每个 workflow 保留最近运行次数
             const owner = context.repo.owner;
             const repo = context.repo.repo;
+            const currentRunId = context.runId; // 当前运行 id，删除时跳过避免删到正在执行的自己
 
-            core.info(`开始清理 ${owner}/${repo} 的工作流历史，每个 workflow 保留最近 ${KEEP} 次`);
+            core.info(`开始清理 ${owner}/${repo} 的工作流历史，每个 workflow 保留最近 ${KEEP} 次（当前 run ${currentRunId} 不会被删除）`);
 
             // 1. 获取所有 workflows
             const workflows = await github.paginate(
@@ -42,11 +43,6 @@ jobs:
 
             // 2. 逐个 workflow 处理
             for (const wf of workflows) {
-              if (wf.path.endsWith('cleanup-workflow-runs.yml')) {
-                core.info(`跳过自身: ${wf.name}`);
-                continue;
-              }
-
               // 获取该 workflow 全部运行记录（按创建时间倒序）
               const runs = await github.paginate(
                 github.rest.actions.listWorkflowRuns,
@@ -59,7 +55,8 @@ jobs:
               }
 
               // 删除多余的（runs 已按时间倒序，跳过前 KEEP 条）
-              const toDelete = runs.slice(KEEP);
+              // 同时跳过当前正在运行的 run，避免删到执行中的自己
+              const toDelete = runs.slice(KEEP).filter(r => r.id !== currentRunId);
               core.info(`[${wf.name}] 共 ${runs.length} 条，删除 ${toDelete.length} 条`);
 
               let deleted = 0;
