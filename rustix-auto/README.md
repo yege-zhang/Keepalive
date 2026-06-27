@@ -105,9 +105,9 @@ GitHub Actions：在仓库 **Settings → Secrets → Actions** 新增：
 ✅ 成功 2 | ❌ 失败 0
 ━━━━━━━━━━━━━━━━━━
 账号明细
-1️⃣ a@example.com
+1️⃣ *********@example.com
     ✅ 成功启动
-2️⃣ b@example.com
+2️⃣ **********@example.com
     🟢 已在线
 ━━━━━━━━━━━━━━━━━━
 🔗 前往控制台

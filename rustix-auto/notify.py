@@ -83,6 +83,14 @@ def _esc(text: str) -> str:
     return html.escape(str(text), quote=False)
 
 
+def _mask_email(email: str) -> str:
+    """脱敏邮箱：将 @ 前的本地名替换为等量 *，@ 后域名保留。"""
+    if "@" in str(email):
+        local, domain = str(email).split("@", 1)
+        return "*" * len(local) + "@" + domain
+    return str(email)
+
+
 def notify_account_result(result: dict) -> bool:
     """单账号处理结果通知。"""
     email = result.get("email", "?")
@@ -95,7 +103,7 @@ def notify_account_result(result: dict) -> bool:
     lines = [
         "🤖 <b>Rustix 自动启动通知</b>",
         "",
-        f"👤 <b>账号</b>: <code>{_esc(email)}</code>",
+        f"👤 <b>账号</b>: <code>{_esc(_mask_email(email))}</code>",
         f"📊 <b>状态</b>: {_status_text(status)}",
         f"🎯 <b>结果</b>: {flag}",
     ]
@@ -130,9 +138,9 @@ def notify_summary(results: list) -> bool:
         f"🚩 <b>总体</b>: {overall}",
         f"⏰ <b>时间</b>: {now}",
         f"📈 <b>统计</b>: 共 {total} 个",
-        f"✅ 成功 {ok} | ❌ 失败 {fail}",
+        f"✅ <b>成功</b> {ok} | ❌ <b>失败</b> {fail}",
         "",
-        "━" * 18,
+        "━" * 13,
         "<b>账号明细</b>",
     ]
     num_emoji = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣",
@@ -142,7 +150,7 @@ def notify_summary(results: list) -> bool:
         email = r.get("email", "?")
         status = r.get("status", "unknown")
         ok_r = r.get("ok", False)
-        line = f"{idx} <code>{_esc(email)}</code>\n    {_status_text(status)}"
+        line = f"{idx} <code>{_esc(_mask_email(email))}</code>\n    {_status_text(status)}"
         err = (r.get("error") or "").strip()
         if err and not ok_r:
             line += f" ｜ <code>{_esc(err[:40])}</code>"
