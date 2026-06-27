@@ -7,6 +7,7 @@ on:
   # 支持手动触发
   workflow_dispatch:
   # 由 Uptime Kuma Webhook 触发（服务器离线时）
+  # 没有 uptime 可删除下面两行，并将定时触发重新启用
   repository_dispatch:
     types: [rustix]
 
@@ -18,6 +19,7 @@ concurrency:
 jobs:
   rustix-alive:
     # workflow_dispatch 始终执行；repository_dispatch 仅在 DOWN（msg 含 Down/DOWN/down）时执行
+    # 没有 uptime 可删除 if 条件
     if: github.event_name != 'repository_dispatch' || contains(github.event.client_payload.msg, 'down') || contains(github.event.client_payload.msg, 'Down') || contains(github.event.client_payload.msg, 'DOWN')
     runs-on: ubuntu-latest
     timeout-minutes: 30
