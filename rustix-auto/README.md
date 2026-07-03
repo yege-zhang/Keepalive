@@ -93,7 +93,7 @@ on:
 
 当 Uptime Kuma 检测到服务器离线（DOWN）时，通过 Webhook 调用 GitHub `repository_dispatch` API 触发 workflow；服务器恢复（UP）时触发但自动跳过执行，不浪费 Actions 额度。
 
-**触发逻辑**：workflow 通过 `if` 判断 `client_payload.msg` 是否包含 `Down`/`DOWN`/`down`，仅在 DOWN 时执行启动流程。
+**触发逻辑**：workflow 通过 `if` 判断 `client_payload.status` 是否包含 `Down`，仅在 Down 时执行启动流程。
 
 #### 1. 创建 GitHub PAT
 
