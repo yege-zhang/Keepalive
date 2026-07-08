@@ -40,6 +40,7 @@ jobs:
 
       - name: 💾 将 session 写回 GitHub Actions Variables
         if: always()
+        working-directory: ./iamhc
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
